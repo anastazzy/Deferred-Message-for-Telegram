@@ -7,6 +7,6 @@ namespace DMfT.Domain
         public int Id { get; set; }
         public int ChatId { get; set; }
         public string MessageText { get; set; }
-        public DateTimeOffset DelayTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
     }
 }
