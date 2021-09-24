@@ -12,7 +12,7 @@ namespace DMfT.IntegrationTests
         {
             _telegramSender = new TelegramSender(new HttpClient(), new TelegramBotOptions
             {
-                SecretKey ="1999928393:AAHCT03DRZuVjddJVFyZB-Z5WprNzHL_x88",
+                SecretKey ="",
             });
         }
 
