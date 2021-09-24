@@ -1,7 +1,9 @@
-﻿namespace DMfT.Contracts
+﻿using System.Threading.Tasks;
+
+namespace DMfT.Contracts
 {
     public interface ITelegramSender
     {
-        bool SendMessage(int chatId, string textMessage);
+        Task<bool> SendMessageAsync(int chatId, string textMessage);
     }
 }

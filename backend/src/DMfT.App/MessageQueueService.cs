@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using DMfT.Contracts;
 using DMfT.DataAccess;
 using DMfT.Domain;
@@ -14,7 +15,7 @@ namespace DMfT.App
             _dbContext = dbContext;
         }
 
-        public int AddMessage(MessageRequest messageRequest)
+        public async Task<int> AddMessageAsync(MessageRequest messageRequest)
         {
             var message = new Message
             {
@@ -23,16 +24,16 @@ namespace DMfT.App
                 StartTime = DateTimeOffset.Now.AddSeconds(messageRequest.DelayTime)
             };
             _dbContext.Messages.Add(message);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return message.Id;
         }
 
-        public bool DeleteMessage(int id)
+        public async Task<bool> DeleteMessageAsync(int id)
         {
             var message = _dbContext.Messages.FirstOrDefault(x => x.Id == id);
             if (message == null) return false;
             _dbContext.Messages.Remove(message);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return true;
         }
     }

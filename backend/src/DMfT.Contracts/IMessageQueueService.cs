@@ -1,8 +1,10 @@
-﻿namespace DMfT.Contracts
+﻿using System.Threading.Tasks;
+
+namespace DMfT.Contracts
 {
     public interface IMessageQueueService
     {
-        int AddMessage(MessageRequest messageRequest);
-        bool DeleteMessage(int id);
+        Task<int> AddMessageAsync(MessageRequest messageRequest);
+        Task<bool> DeleteMessageAsync(int id);
     }
 }

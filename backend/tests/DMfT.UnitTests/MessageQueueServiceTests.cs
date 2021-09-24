@@ -1,6 +1,8 @@
 using System;
+using System.Threading.Tasks;
 using DMfT.App;
 using DMfT.Contracts;
+using DMfT.Domain;
 using Xunit;
 
 namespace DMfT.UnitTests
@@ -15,7 +17,7 @@ namespace DMfT.UnitTests
         }
 
         [Fact]
-        public void AddMessage_ShouldAddNewMessageInDataBase()
+        public async Task AddMessage_ShouldAddNewMessageInDataBase()
         {
             // Arrange
             var request = new MessageRequest
@@ -26,7 +28,7 @@ namespace DMfT.UnitTests
             };
 
             // Act
-            _service.AddMessage(request);
+            await _service.AddMessageAsync(request);
 
             // Assert
             var message = Assert.Single(DbContext.Messages);
@@ -36,15 +38,37 @@ namespace DMfT.UnitTests
         }
 
         [Fact]
-        public void DeleteMessage_ShouldDeleteMessageFromDataBase_IfItExists()
+        public async Task DeleteMessage_ShouldDeleteMessageFromDataBase_IfItExists()
         {
+            // Arrange
+            var request = new Message
+            {
+                ChatId = 10,
+                MessageText = "Hello World!",
+                StartTime = DateTimeOffset.Now,
+            };
+            DbContext.Messages.Add(request);
+            await DbContext.SaveChangesAsync();
 
+            // Act
+            var result = await _service.DeleteMessageAsync(request.Id);
+
+            // Assert
+            Assert.True(result);
+            Assert.Empty(DbContext.Messages);
         }
 
         [Fact]
-        public void DeleteMessage_ShouldNotDeleteMessageFromDataBase_IfItNotExists()
+        public async Task DeleteMessage_ShouldNotDeleteMessageFromDataBase_IfItNotExists()
         {
+            // Arrange
+            var idMessage = 10;
 
+            // Act
+            var result = await _service.DeleteMessageAsync(idMessage);
+
+            // Assert
+            Assert.False(result);
         }
     }
 }
