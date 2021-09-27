@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Formats.Asn1;
 using System.Linq;
 using System.Threading.Tasks;
 using DMfT.Contracts;
 using DMfT.DataAccess;
 using DMfT.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace DMfT.App
 {
@@ -48,16 +51,11 @@ namespace DMfT.App
             if (message == null) return false;
             var startTime = message.StartTime;
             var sendIn =startTime - DateTimeOffset.Now;
-            if (sendIn.TotalMilliseconds <= 0) return await SendMessageAsync(id);
-            _ = Task.Delay(sendIn).ContinueWith(_ => SendMessageAsync(id));
+            if (sendIn.TotalMilliseconds <= 0) return await _telegramSender.SendMessageAsync(id);
+            _ = Task.Delay(sendIn).ContinueWith(_ => _telegramSender.SendMessageAsync(id));
             return true;
         }
 
-        public async Task<bool> SendMessageAsync(int id)
-        {
-            var message = _dbContext.Messages.FirstOrDefault(x => x.Id == id);
-            if (message == null) return false;
-            return await _telegramSender.SendMessageAsync(id, message.MessageText);
-        }
+       
     }
 }

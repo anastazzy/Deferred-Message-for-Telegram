@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using DMfT.App;
 using DMfT.Contracts;
@@ -53,7 +54,7 @@ namespace DMfT.UnitTests
             await _service.AddMessageAsync(request);
 
             // Assert
-            _telegramSenderMock.Verify(x => x.SendMessageAsync(It.IsAny<int>(),It.IsAny<string>()));
+            _telegramSenderMock.Verify(x => x.SendMessageAsync(It.IsAny<int>()));
 
         }
 
@@ -71,9 +72,9 @@ namespace DMfT.UnitTests
             await _service.AddMessageAsync(request);
 
             // Assert
-            _telegramSenderMock.Verify(x => x.SendMessageAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+            _telegramSenderMock.Verify(x => x.SendMessageAsync(It.IsAny<int>()), Times.Never);
             await Task.Delay(1000);
-            _telegramSenderMock.Verify(x => x.SendMessageAsync(It.IsAny<int>(), It.IsAny<string>()));
+            _telegramSenderMock.Verify(x => x.SendMessageAsync(It.IsAny<int>()));
         }
 
         [Fact]
@@ -109,5 +110,6 @@ namespace DMfT.UnitTests
             // Assert
             Assert.False(result);
         }
+
     }
 }

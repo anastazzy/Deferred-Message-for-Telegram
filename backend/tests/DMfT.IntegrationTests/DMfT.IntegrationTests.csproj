@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DMfT.App\DMfT.App.csproj" />
+    <ProjectReference Include="..\DMfT.UnitTests\DMfT.UnitTests.csproj" />
   </ItemGroup>
 
 </Project>

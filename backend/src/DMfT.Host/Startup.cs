@@ -11,6 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DMfT.App;
+using DMfT.Contracts;
+using DMfT.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace DMfT.host
 {
@@ -28,6 +32,17 @@ namespace DMfT.host
         {
 
             services.AddControllers();
+
+            services.AddSingleton<ITelegramSender, TelegramSender>();
+            services.AddScoped<IMessageQueueService, MessageQueueService>();
+            services.AddDbContext<DMfTDbContext>(x =>
+                x.UseNpgsql(Configuration.GetConnectionString("Postgre")));
+            services.AddHttpClient();
+            services.AddScoped<IServiceLoader, ServiceLoader>();
+
+            services.AddOptions<TelegramBotOptions>();
+            services.Configure<TelegramBotOptions>(Configuration.GetSection(nameof(TelegramBotOptions)));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DMfT.host", Version = "v1" });

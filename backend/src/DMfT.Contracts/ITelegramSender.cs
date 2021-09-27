@@ -4,6 +4,6 @@ namespace DMfT.Contracts
 {
     public interface ITelegramSender
     {
-        Task<bool> SendMessageAsync(int chatId, string textMessage);
+        Task<bool> SendMessageAsync(int id);
     }
 }
