@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Formats.Asn1;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using DMfT.Contracts;
 using DMfT.DataAccess;
@@ -15,6 +18,7 @@ namespace DMfT.App
     {
         private readonly DMfTDbContext _dbContext;
         private readonly ITelegramSender _telegramSender;
+        private static readonly ConcurrentDictionary<int, CancellationTokenSource> _runningTasks = new();
 
         public MessageQueueService(DMfTDbContext dbContext, ITelegramSender telegramSender)
         {
@@ -39,7 +43,8 @@ namespace DMfT.App
         public async Task<bool> DeleteMessageAsync(int id)
         {
             var message = _dbContext.Messages.FirstOrDefault(x => x.Id == id);
-            if (message == null) return false;
+            if (message == null || !_runningTasks.TryGetValue(id, out var cts)) return false;
+            cts.Cancel();
             _dbContext.Messages.Remove(message);
             await _dbContext.SaveChangesAsync();
             return true;
@@ -52,7 +57,9 @@ namespace DMfT.App
             var startTime = message.StartTime;
             var sendIn =startTime - DateTimeOffset.Now;
             if (sendIn.TotalMilliseconds <= 0) return await _telegramSender.SendMessageAsync(id);
-            _ = Task.Delay(sendIn).ContinueWith(_ => _telegramSender.SendMessageAsync(id));
+            var cts = new CancellationTokenSource();
+            _ = Task.Delay(sendIn, cts.Token).ContinueWith(_ => _telegramSender.SendMessageAsync(id), cts.Token);
+            _runningTasks.TryAdd(id, cts);
             return true;
         }
 
