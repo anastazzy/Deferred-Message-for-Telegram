@@ -63,6 +63,17 @@ namespace DMfT.App
             return true;
         }
 
-       
+        public async Task<MessageDto[]> GetMessagesList()
+        {
+            var messages = await _dbContext.Messages.ToArrayAsync();
+           return messages.Select(message => new MessageDto
+            {
+                ChatId = message.ChatId,
+                Id = message.Id,
+                MessageText = message.MessageText,
+                StartTime = message.StartTime,
+            }).ToArray();
+            
+        }
     }
 }

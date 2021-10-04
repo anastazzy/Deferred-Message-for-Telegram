@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using DMfT.App;
 using DMfT.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using DMfT.DataAccess;
@@ -33,6 +34,12 @@ namespace DMfT.Host.Controllers
         public Task<bool> DeleteMessages(int id)
         {
             return _service.DeleteMessageAsync(id);
+        }
+
+        [HttpGet]
+        public Task<MessageDto[]> GetMessagesList()
+        {
+            return _service.GetMessagesList();
         }
     }
 }
